@@ -1,0 +1,47 @@
+/* ============================================================
+   REGIONAL CARDS
+   ============================================================ */
+.regional-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 32px; display: flex; flex-direction: column; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); overflow: hidden; position: relative; }
+/* Decorative blur overlays */
+.regional-card-overlay { position: absolute; top: 0; right: 0; width: 192px; height: 192px; border-radius: 12px; filter: blur(32px); pointer-events: none; }
+.regional-card-overlay.blue { background: rgba(137, 206, 255, 0.05); }
+.regional-card-overlay.teal { background: rgba(79, 219, 200, 0.05); }
+/* Card header */
+.regional-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 12px; }
+.regional-card-title { display: flex; align-items: center; gap: 8px; }
+.regional-card-title h3 { margin: 0; font-size: 24px; font-weight: bold; letter-spacing: -0.36px; color: var(--text); }
+.regional-card-icon { width: 17.5px; height: 19.833px; }
+
+/* ============================================================
+   HERO IMAGE
+   ============================================================ */
+.hero .img-fluid { width: 100%; aspect-ratio: auto; }
+
+/* ============================================================
+   RESPONSIVE DESIGN
+   ============================================================ */
+@media (max-width: 768px) {
+  .faq-question { padding: 14px; font-size: 14px; }
+  .faq-answer { padding: 12px 14px; font-size: 13px; line-height: 1.6; }
+  .faq-question-text { padding-right: 8px; }
+  .faq-chevron { width: 11px; height: 6.8px; }
+}
+@media (max-width: 767px) {
+  .regional-card { padding: 24px; }
+  .regional-card-header { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 480px) {
+  .faq-container { gap: 8px; }
+  .faq-question { padding: 12px; font-size: 13px; }
+  .faq-answer { padding: 10px 12px; font-size: 12px; }
+}
+/* ============================================================
+   USER PREFERENCES
+   ============================================================ */
+@media (prefers-color-scheme: dark) {
+  .faq-item:hover { box-shadow: 0 2px 8px rgba(255, 255, 255, 0.05); }
+  .faq-question:hover { background-color: rgba(79, 219, 200, 0.08); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .faq-item, .faq-question, .faq-chevron, .faq-answer { transition: none; animation: none; }
+}
