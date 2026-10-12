@@ -11,6 +11,7 @@ const DOM = {
   nextBtn: document.getElementById("nextBtn"),
   indicators: document.getElementById("indicators")
 };
+
 // Form validation messages
 const REQUIRED_MESSAGES = {
   name: "Please enter your name.",
@@ -20,13 +21,16 @@ const REQUIRED_MESSAGES = {
   country: "Please select your country.",
   service: "Please select the service you need."
 };
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz3u1P8AGFBjqnHwt7TBc0m5CxB35BeTp8EOMXouf3Vj6_JNv6psU3tzqgA3V0EZzSd/exec';
+
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw520dBVO-cwFycHBOtDGgnlMz-3RjN6AcZ8AhJgZqQvx71E6fpA0t33DV0_hnwjcXI/exec';
+
 // ============ UTILITY FUNCTIONS ============
 const setStatus = (message, type = "") => {
   if (!DOM.status) return;
   DOM.status.textContent = message;
   DOM.status.className = ["form-status", type ? `form-status--${type}` : ""].filter(Boolean).join(" ");
 };
+
 const getValidationMessage = (control) => {
   const value = control.value.trim();
   if (control.required && !value) {
@@ -44,6 +48,7 @@ const getValidationMessage = (control) => {
   };
   return validations[control.name]?.(value) || "";
 };
+
 const validateField = (control) => {
   const message = getValidationMessage(control);
   const error = document.getElementById(`${control.id}-error`);
@@ -57,10 +62,12 @@ const validateField = (control) => {
   }
   return !message;
 };
+
 // ============ FORM INITIALIZATION ============
 function initializeForm() {
   if (!DOM.form || !DOM.status) return;
   const formControls = Array.from(DOM.form.querySelectorAll("input, select, textarea"));
+
   // Create error messages for each field
   formControls.forEach(control => {
     const error = document.createElement("div");
@@ -69,6 +76,7 @@ function initializeForm() {
     error.setAttribute("aria-live", "polite");
     control.insertAdjacentElement("afterend", error);
     control.setAttribute("aria-describedby", error.id);
+
     // Event listeners with passive flag for better performance
     control.addEventListener("blur", () => validateField(control));
     control.addEventListener("change", () => validateField(control));
@@ -81,10 +89,12 @@ function initializeForm() {
       }
     });
   });
+
   // Form submission
   DOM.form.addEventListener("submit", (event) => {
     event.preventDefault();
     const isValid = formControls.map(validateField).every(Boolean);
+
     if (!isValid) {
       const firstInvalid = formControls.find(control => !control.checkValidity());
       DOM.form.classList.add("was-validated");
@@ -94,12 +104,15 @@ function initializeForm() {
       }
       return;
     }
+
     DOM.form.classList.remove("was-validated");
     setStatus("Submitting...");
+
     const submitBtn = DOM.form.querySelector('button[type="submit"]');
     if (submitBtn) submitBtn.disabled = true;
-    // Collect form data
-    const formData = {
+
+    // Collect form data using URLSearchParams for POST request
+    const formData = new URLSearchParams({
       name: document.getElementById('name').value,
       company: document.getElementById('company').value,
       email: document.getElementById('email').value,
@@ -107,23 +120,35 @@ function initializeForm() {
       country: document.getElementById('country').value,
       service: document.getElementById('service').value,
       details: document.getElementById('details').value
-    };
-    const url = SCRIPT_URL + "?" + new URLSearchParams(formData);
-    fetch(url, { method: "GET", mode: "no-cors" })
+    });
+
+    fetch(SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: formData
+    })
       .then(() => {
         setStatus('Thank you! We have received your enquiry and will be in touch soon.', 'success');
         DOM.form.reset();
+        formControls.forEach(control => {
+          control.classList.remove("is-valid", "is-invalid");
+        });
         if (submitBtn) submitBtn.disabled = false;
         setTimeout(() => {
           setStatus("");
         }, 5000);
       })
-      .catch(() => {
+      .catch((error) => {
+        console.error('Submission error:', error);
         setStatus('Something went wrong. Please try again.', 'error');
         if (submitBtn) submitBtn.disabled = false;
       });
   });
 }
+
 // ============ BACK TO TOP BUTTON ============
 function initializeBackToTop() {
   if (!DOM.backToTop) return;
@@ -135,6 +160,7 @@ function initializeBackToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 }
+
 // ============ NAVIGATION ============
 function initializeNavigation() {
   if (DOM.navLinks.length === 0) return;
@@ -146,6 +172,7 @@ function initializeNavigation() {
     });
   });
 }
+
 // ============ CAROUSEL - OPTIMIZED ============
 function initializeCarousel() {
   if (!DOM.track || !DOM.carouselContainer || !DOM.prevBtn || !DOM.nextBtn || !DOM.indicators) {
@@ -158,12 +185,13 @@ function initializeCarousel() {
   let visibleItems = 1;
   let autoScrollTimer = null;
   let isAnimating = false;
-  // Performance: Request animation frame for smooth scrolling
+
   const clampPosition = () => {
     const maxPosition = Math.max(0, totalItems - visibleItems);
     currentPosition = Math.min(Math.max(0, currentPosition), maxPosition);
     return maxPosition;
   };
+
   const getVisibleItems = () => {
     const firstItem = items[0];
     if (!firstItem) return 1;
@@ -172,6 +200,7 @@ function initializeCarousel() {
     if (!itemWidth || !wrapperWidth) return 1;
     return Math.max(1, Math.round(wrapperWidth / itemWidth));
   };
+
   const renderIndicators = () => {
     DOM.indicators.innerHTML = '';
     const slideCount = Math.max(1, Math.ceil(totalItems / visibleItems));
@@ -187,6 +216,7 @@ function initializeCarousel() {
       DOM.indicators.appendChild(indicator);
     }
   };
+
   const updateIndicators = () => {
     const activeIndex = Math.floor(currentPosition / visibleItems);
     const indicators = DOM.indicators.querySelectorAll('.indicator');
@@ -194,6 +224,7 @@ function initializeCarousel() {
       indicator.classList.toggle('active', index === activeIndex);
     });
   };
+
   const updateCarousel = () => {
     visibleItems = getVisibleItems();
     const maxPosition = clampPosition();
@@ -207,79 +238,67 @@ function initializeCarousel() {
       currentPosition = maxPosition;
     }
   };
+
   const nextSlide = () => {
     if (isAnimating) return;
     const maxPosition = clampPosition();
     currentPosition = currentPosition < maxPosition ? currentPosition + 1 : 0;
     updateCarousel();
   };
+
   const prevSlide = () => {
     if (isAnimating) return;
     const maxPosition = clampPosition();
     currentPosition = currentPosition > 0 ? currentPosition - 1 : maxPosition;
     updateCarousel();
   };
+
   const goToSlide = (index) => {
     if (isAnimating) return;
     currentPosition = index * visibleItems;
     clampPosition();
     updateCarousel();
   };
+
   const startAutoScroll = () => {
     clearInterval(autoScrollTimer);
     if (totalItems > visibleItems) {
       autoScrollTimer = setInterval(nextSlide, autoScrollInterval);
     }
   };
+
   const resetAutoScroll = () => {
     startAutoScroll();
   };
-  // Event listeners with passive flag
+
   DOM.nextBtn.addEventListener('click', () => {
     nextSlide();
     resetAutoScroll();
   }, { passive: true });
+
   DOM.prevBtn.addEventListener('click', () => {
     prevSlide();
     resetAutoScroll();
   }, { passive: true });
+
   DOM.carouselContainer.addEventListener('mouseenter', () => {
     clearInterval(autoScrollTimer);
   }, { passive: true });
+
   DOM.carouselContainer.addEventListener('mouseleave', () => {
     startAutoScroll();
   }, { passive: true });
+
   window.addEventListener('resize', () => {
     updateCarousel();
     resetAutoScroll();
   }, { passive: true });
-  // Initial setup
+
   updateCarousel();
   startAutoScroll();
 }
-// ============ INITIALIZATION ============
-// Only initialize when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    initializeForm();
-    initializeBackToTop();
-    initializeNavigation();
-    initializeCarousel();
-  });
-} else {
-  // DOM is already loaded
-  initializeForm();
-  initializeBackToTop();
-  initializeNavigation();
-  initializeCarousel();
-}
-// Performance: Clean up on page unload
-window.addEventListener('beforeunload', () => {
-  // Remove event listeners if needed
-}, { passive: true });
-/**
- * Open a FAQ item with animation
- */
+
+// ============ FAQ ACCORDION ============
 function openFAQ(faqItem) {
   const answer = faqItem.querySelector('.faq-answer');
   const question = faqItem.querySelector('.faq-question');
@@ -296,9 +315,7 @@ function openFAQ(faqItem) {
   faqItem.classList.add('open');
   question.setAttribute('aria-expanded', 'true');
 }
-/**
-* Close a FAQ item with animation
-*/
+
 function closeFAQ(faqItem) {
   const answer = faqItem.querySelector('.faq-answer');
   const question = faqItem.querySelector('.faq-question');
@@ -315,25 +332,45 @@ function closeFAQ(faqItem) {
   faqItem.classList.remove('open');
   question.setAttribute('aria-expanded', 'false');
 }
-/**
- * FAQ Accordion
- * Only one FAQ can remain open at a time.
- */
-document.querySelectorAll('.faq-question').forEach((question) => {
-  question.addEventListener('click', () => {
-    const currentItem = question.closest('.faq-item');
-    const isOpen = currentItem.classList.contains('open');
-    // Close all other FAQ items
-    document.querySelectorAll('.faq-item.open').forEach((item) => {
-      if (item !== currentItem) {
-        closeFAQ(item);
+
+function initializeFAQ() {
+  document.querySelectorAll('.faq-question').forEach((question) => {
+    question.addEventListener('click', () => {
+      const currentItem = question.closest('.faq-item');
+      const isOpen = currentItem.classList.contains('open');
+
+      document.querySelectorAll('.faq-item.open').forEach((item) => {
+        if (item !== currentItem) {
+          closeFAQ(item);
+        }
+      });
+
+      if (isOpen) {
+        closeFAQ(currentItem);
+      } else {
+        openFAQ(currentItem);
       }
     });
-    // Toggle current FAQ
-    if (isOpen) {
-      closeFAQ(currentItem);
-    } else {
-      openFAQ(currentItem);
-    }
   });
-});
+}
+
+// ============ INITIALIZATION ============
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    initializeForm();
+    initializeBackToTop();
+    initializeNavigation();
+    initializeCarousel();
+    initializeFAQ();
+  });
+} else {
+  initializeForm();
+  initializeBackToTop();
+  initializeNavigation();
+  initializeCarousel();
+  initializeFAQ();
+}
+
+window.addEventListener('beforeunload', () => {
+  // Clean up if needed
+}, { passive: true });

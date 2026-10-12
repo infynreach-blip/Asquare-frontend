@@ -2,7 +2,7 @@
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 html,body{max-width:100%;overflow-x:hidden}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.6}
+body{margin:0;color:var(--text);font-family:Inter,system-ui,sans-serif;font-size:15px;line-height:1.6; background-image: url("../images/it-infrastructure-bg.webp") !important; background-attachment: fixed !important; background-size: cover !important;}
 a{color:#4fdbc8; font-weight: 600; text-decoration: none;}
 .brand-copy{color: #d9d9d9;}
 img,svg{max-width:100%;height:auto}
@@ -12,8 +12,8 @@ img,svg{max-width:100%;height:auto}
   html{scroll-behavior:auto}
   *{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}
 }
-.section-dark{background:var(--bg)}
-.section-alt{background:var(--bg2)}
+.section-dark{background: var(--bg2);}
+.section-alt{background: var(--bg)}
 .section{padding:96px 0;position:relative;overflow:hidden}
 .section-sm{padding:48px 0}
 h1,h2,h3,h4,.h1,.h2,.h3,.h4, strong,.brand-copy{font-family:Outfit,Inter,sans-serif;}
