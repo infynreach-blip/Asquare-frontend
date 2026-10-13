@@ -163,11 +163,13 @@ function initializeBackToTop() {
 
 // ============ NAVIGATION ============
 function initializeNavigation() {
-  if (DOM.navLinks.length === 0) return;
+  if (!DOM.mainNav || DOM.navLinks.length === 0) return;
   DOM.navLinks.forEach(link => {
+    if (link.classList.contains("dropdown-toggle")) return;
+
     link.addEventListener("click", () => {
-      if (DOM.mainNav?.classList.contains("show") && window.bootstrap) {
-        bootstrap.Collapse.getOrCreateInstance(DOM.mainNav).hide();
+      if (window.innerWidth < 1200 && DOM.mainNav.classList.contains("show") && window.bootstrap?.Collapse) {
+        window.bootstrap.Collapse.getOrCreateInstance(DOM.mainNav).hide();
       }
     });
   });
@@ -374,3 +376,47 @@ if (document.readyState === 'loading') {
 window.addEventListener('beforeunload', () => {
   // Clean up if needed
 }, { passive: true });
+document.addEventListener("DOMContentLoaded", function () {
+    const partnersCarousel = new Swiper(".partners-carousel", {
+        slidesPerView: 7,
+        spaceBetween: 16,
+        speed: 600,
+        loop: true,
+        grabCursor: true,
+
+        autoplay: {
+            delay: 1000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true
+        },
+
+        navigation: {
+            nextEl: ".partners-next",
+            prevEl: ".partners-prev"
+        },
+
+        pagination: {
+            el: ".partners-pagination",
+            clickable: true
+        },
+
+        breakpoints: {
+            576: {
+                slidesPerView: 3,
+                spaceBetween: 18
+            },
+            768: {
+                slidesPerView: 4,
+                spaceBetween: 20
+            },
+            1200: {
+                slidesPerView: 7,
+                spaceBetween: 24
+            }
+        },
+
+        a11y: {
+            enabled: true
+        }
+    });
+});
