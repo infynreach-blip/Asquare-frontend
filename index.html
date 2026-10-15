@@ -4,12 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Asquare Technologies delivers expert IT infrastructure solutions in UAE & Canada, specializing in networking, security, CCTV, AV, cabling & ICT.">
-    <meta name="keywords" content="">
     <meta name="robots" content="index, follow">
     <meta name="author" content="Asquare Technologies">
-    <meta name="language" content="English">
-    <meta name="revisit-after" content="7 days">
-    <meta name="rating" content="General">
     <!-- Canonical URL -->
     <link rel="canonical" href="https://www.asquaretechnologies.ae/">
     <!-- Title & Meta -->
@@ -42,13 +38,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="preload" href="../assets/images/it-infrastructure/it-infrastructure-services-solutions-for-modern-business.webp" as="image" fetchpriority="high">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" href="assets/images/home/leading-it-infrastructure-company-services-in-uae-and-canada.webp" as="image" fetchpriority="high">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Outfit:wght@500;600;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" onload="this.onload=null;this.rel='stylesheet'">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    </noscript>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -228,7 +228,7 @@
       <nav class="navbar navbar-expand-xl navbar-dark" aria-label="Main navigation">
         <div class="container">
           <a class="brand d-flex align-items-center gap-3 text-decoration-none" href="https://www.asquaretechnologies.ae/" aria-label="Asquare Technologies home">
-            <img src="assets/images/logo.png" alt="Asquare Technologies logo" title="Asquare Technologies" height="31" width="33" class="img-fluid" fetchpriority="high" />
+            <img src="assets/images/logo.png" alt="Asquare Technologies logo" title="Asquare Technologies" height="31" width="33" class="img-fluid" decoding="async"/>
             <span class="brand-copy">
               <strong>ASQUARE TECHNOLOGIES</strong>
             </span>
@@ -1045,7 +1045,7 @@
           <div class="col-12 col-lg-4">
             <div class="brand d-flex align-items-center gap-3">
               <a class="brand d-flex align-items-center gap-3 text-decoration-none" href="https://www.asquaretechnologies.ae/" aria-label="Asquare Technologies home">
-                <img src="assets/images/logo.png" alt="Asquare Technologies logo" title="Asquare Technologies" height="31" width="33" class="img-fluid" fetchpriority="high" />
+                <img src="assets/images/logo.png" alt="Asquare Technologies logo" title="Asquare Technologies" height="31" width="33" class="img-fluid" loading="lazy" decoding="async"/>
                 <span class="brand-copy">
                   <strong>ASQUARE TECHNOLOGIES</strong>
                 </span>
@@ -1111,12 +1111,12 @@
     <button class="back-to-top" id="backToTop" aria-label="Back to top"><i class="bi bi-arrow-up"></i></button>
     <!-- Bootstrap JS - deferred -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
     <script>
-    AOS.init();
+    document.addEventListener("DOMContentLoaded", function () { if (window.AOS) AOS.init(); });
     </script>
     <!-- Main Script - deferred and optimized -->
     <script src="assets/js/script.js" defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js" defer></script>
   </body>
 </html>
