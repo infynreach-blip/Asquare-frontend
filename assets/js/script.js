@@ -180,6 +180,9 @@ function initializeCarousel() {
   if (!DOM.track || !DOM.carouselContainer || !DOM.prevBtn || !DOM.nextBtn || !DOM.indicators) {
     return;
   }
+  const carouselWrapper = DOM.carouselContainer.querySelector('.carousel-wrapper');
+  if (!carouselWrapper) return;
+
   const items = Array.from(DOM.track.children);
   const totalItems = items.length;
   const autoScrollInterval = 4000;
@@ -187,6 +190,7 @@ function initializeCarousel() {
   let visibleItems = 1;
   let autoScrollTimer = null;
   let isAnimating = false;
+  let dragState = null;
 
   const clampPosition = () => {
     const maxPosition = Math.max(0, totalItems - visibleItems);
@@ -198,9 +202,16 @@ function initializeCarousel() {
     const firstItem = items[0];
     if (!firstItem) return 1;
     const itemWidth = firstItem.getBoundingClientRect().width;
-    const wrapperWidth = DOM.carouselContainer.querySelector('.carousel-wrapper').getBoundingClientRect().width;
+    const wrapperWidth = carouselWrapper.getBoundingClientRect().width;
     if (!itemWidth || !wrapperWidth) return 1;
-    return Math.max(1, Math.round(wrapperWidth / itemWidth));
+    const gap = parseFloat(window.getComputedStyle(DOM.track).columnGap) || 0;
+    return Math.max(1, Math.floor((wrapperWidth + gap) / (itemWidth + gap)));
+  };
+
+  const getActiveIndicatorIndex = () => {
+    const slideCount = Math.max(1, Math.ceil(totalItems / visibleItems));
+    const isAtEnd = currentPosition >= totalItems - visibleItems;
+    return Math.min(isAtEnd ? slideCount - 1 : Math.floor(currentPosition / visibleItems), slideCount - 1);
   };
 
   const renderIndicators = () => {
@@ -209,7 +220,7 @@ function initializeCarousel() {
     for (let i = 0; i < slideCount; i++) {
       const indicator = document.createElement('button');
       indicator.type = 'button';
-      indicator.className = 'indicator' + (i === Math.floor(currentPosition / visibleItems) ? ' active' : '');
+      indicator.className = 'indicator' + (i === getActiveIndicatorIndex() ? ' active' : '');
       indicator.setAttribute('aria-label', `Go to client slide ${i + 1}`);
       indicator.addEventListener('click', () => {
         goToSlide(i);
@@ -220,7 +231,7 @@ function initializeCarousel() {
   };
 
   const updateIndicators = () => {
-    const activeIndex = Math.floor(currentPosition / visibleItems);
+    const activeIndex = getActiveIndicatorIndex();
     const indicators = DOM.indicators.querySelectorAll('.indicator');
     indicators.forEach((indicator, index) => {
       indicator.classList.toggle('active', index === activeIndex);
@@ -288,8 +299,70 @@ function initializeCarousel() {
   }, { passive: true });
 
   DOM.carouselContainer.addEventListener('mouseleave', () => {
-    startAutoScroll();
+    if (!dragState?.isDragging) startAutoScroll();
   }, { passive: true });
+
+  carouselWrapper.addEventListener('pointerdown', (event) => {
+    if ((event.pointerType === 'mouse' && event.button !== 0) || totalItems <= visibleItems) return;
+    dragState = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      startOffset: items[currentPosition]?.offsetLeft || 0,
+      isDragging: false,
+      isVertical: false
+    };
+    clearInterval(autoScrollTimer);
+    carouselWrapper.setPointerCapture(event.pointerId);
+  });
+
+  carouselWrapper.addEventListener('pointermove', (event) => {
+    if (!dragState || event.pointerId !== dragState.pointerId || dragState.isVertical) return;
+    const deltaX = event.clientX - dragState.startX;
+    const deltaY = event.clientY - dragState.startY;
+
+    if (!dragState.isDragging && Math.max(Math.abs(deltaX), Math.abs(deltaY)) < 8) return;
+    if (!dragState.isDragging && Math.abs(deltaY) > Math.abs(deltaX)) {
+      dragState.isVertical = true;
+      return;
+    }
+
+    dragState.isDragging = true;
+    carouselWrapper.classList.add('is-dragging');
+    DOM.track.style.transform = `translateX(${-dragState.startOffset + deltaX}px)`;
+  });
+
+  const finishPointerGesture = (event, canceled = false) => {
+    if (!dragState || event.pointerId !== dragState.pointerId) return;
+
+    const { startX, isDragging } = dragState;
+    const deltaX = event.clientX - startX;
+    if (isDragging) {
+      const itemWidth = items[0]?.getBoundingClientRect().width || 1;
+      const threshold = Math.max(32, itemWidth * 0.15);
+
+      if (!canceled && Math.abs(deltaX) >= threshold) {
+        const maxPosition = clampPosition();
+        const range = maxPosition + 1;
+        const steps = Math.max(1, Math.round(Math.abs(deltaX) / (itemWidth * 0.6)));
+        const direction = deltaX < 0 ? 1 : -1;
+        currentPosition = (currentPosition + direction * steps % range + range) % range;
+      }
+
+      carouselWrapper.classList.remove('is-dragging');
+      updateCarousel();
+    }
+
+    dragState = null;
+    if (carouselWrapper.hasPointerCapture(event.pointerId)) {
+      carouselWrapper.releasePointerCapture(event.pointerId);
+    }
+    startAutoScroll();
+  };
+
+  carouselWrapper.addEventListener('pointerup', (event) => finishPointerGesture(event));
+  carouselWrapper.addEventListener('pointercancel', (event) => finishPointerGesture(event, true));
+  carouselWrapper.addEventListener('lostpointercapture', (event) => finishPointerGesture(event, true));
 
   window.addEventListener('resize', () => {
     updateCarousel();
@@ -378,8 +451,8 @@ window.addEventListener('beforeunload', () => {
 }, { passive: true });
 document.addEventListener("DOMContentLoaded", function () {
     const partnersCarousel = new Swiper(".partners-carousel", {
-        slidesPerView: 7,
-        spaceBetween: 16,
+        slidesPerView: 2,
+        spaceBetween: 12,
         speed: 600,
         loop: true,
         grabCursor: true,
@@ -403,13 +476,21 @@ document.addEventListener("DOMContentLoaded", function () {
         breakpoints: {
             576: {
                 slidesPerView: 3,
-                spaceBetween: 18
+                spaceBetween: 16
             },
             768: {
                 slidesPerView: 4,
+                spaceBetween: 18
+            },
+            992: {
+                slidesPerView: 5,
                 spaceBetween: 20
             },
             1200: {
+                slidesPerView: 6,
+                spaceBetween: 24
+            },
+            1400: {
                 slidesPerView: 7,
                 spaceBetween: 24
             }

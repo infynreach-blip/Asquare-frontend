@@ -44,11 +44,14 @@ h3{font-size:20px;line-height:1.4}
   .services-dropdown .dropdown-item { padding: 9px 16px; }
 }
 .carousel-container { position: relative; width: 100%; padding: 2rem 0; }
-.carousel-wrapper { overflow: hidden; border-radius: 6px;}
+.carousel-wrapper { overflow: hidden; border-radius: 6px; touch-action: pan-y; cursor: grab; user-select: none; -webkit-user-select: none; }
+.carousel-wrapper.is-dragging { cursor: grabbing; }
+.carousel-wrapper.is-dragging .carousel-track { transition: none; }
 .carousel-track { display: flex; gap: 1rem; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
 .client-carousel-item { flex: 0 0 calc(20% - 0.75rem); min-width: 0; }
 .client-card { height: 100%; width: 220px; background: var(--surface); border: 0.5px solid var(--border); border-radius: 6px; display: flex; align-items: center; justify-content: center; padding: 1.25rem; overflow: hidden; }
 .client-card img { width: 200px; height: 150px; object-fit: contain; border-radius: 4px; }
+.client-carousel-item img { -webkit-user-drag: none; }
 .carousel-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; gap: 1rem; }
 .carousel-button { background: var(--surface); border: 0.5px solid var(--border); border-radius: 6px; padding: 0.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; color: var(--text); transition: all 0.2s; }
 .carousel-button:hover:not(:disabled) { border-color: rgba(137, 206, 255, 0.35); background: var(--surface2); }
@@ -190,7 +193,8 @@ div.h2{font-size:40px;line-height:1.2;letter-spacing:-1px;font-weight:700}
 .brand-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; display: flex; align-items: center; justify-content: center; min-height: 160px; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; overflow: hidden; }
 .brand-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent); transition: left 0.5s ease; }
 .brand-card, .process-card, .stat-card, .service-card, .industry-card, .feature-card { transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, transform .2s ease; }
-.brand-card:hover, .process-card:hover, .stat-card:hover, .service-card:hover, .industry-card:hover, .feature-card:hover { background: var(--hover-bg); border-color: var(--primary-color); box-shadow: 0 12px 24px var(--hover-shadow); transform: translateY(-2px); }
+.process-card:hover, .stat-card:hover, .service-card:hover, .industry-card:hover, .feature-card:hover { background: var(--hover-bg); border-color: var(--primary-color); box-shadow: 0 12px 24px var(--hover-shadow); transform: translateY(-2px); }
+.brand-card:hover{ background: var(--hover-bg); border-color: var(--primary-color); box-shadow: 0 12px 24px var(--hover-shadow);}
 .brand-card:hover::before { left: 100%; }
 .brand-card img { max-width: 100%; max-height: 100%; object-fit: contain; position: relative; z-index: 1; }
 /* Responsive adjustments */
@@ -294,6 +298,25 @@ h2, div.h2, .hero-copy h1, .brand-copy strong, .stat-card>strong{ letter-spacing
   .header-actions .btn{ width:100%; }
   .cta-panel h2{ font-size:34px; }
 }
+
+/* Technology partners carousel */
+.partners-carousel{ width:100%; min-width:0; }
+.partners-carousel .swiper-slide{ height:auto; }
+.partners-carousel .brand-card{
+  width:100%;
+  min-height:clamp(104px, 11vw, 144px);
+  padding:clamp(10px, 1.4vw, 18px);
+}
+.partners-carousel .brand-card img{
+  width:100%;
+  max-width:120px;
+  max-height:100px;
+  object-fit:contain;
+}
+@media (max-width:575px){
+  .partners-carousel .brand-card{ min-height:104px; padding:8px; }
+  .partners-carousel .brand-card img{ max-height:76px; }
+}
 @media (max-width:991px){
   .hero{ min-height:0; padding-bottom:76px; }
   .hero-copy{ max-width:760px; }
@@ -378,10 +401,38 @@ h2, div.h2, .hero-copy h1, .brand-copy strong, .stat-card>strong{ letter-spacing
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
 /* Small visual refinements */
 .site-header{border-bottom:1px solid rgba(255,255,255,.07);box-shadow:0 10px 30px rgba(0,0,0,.14)}
 .nav-link{border-radius:8px;transition:color .2s ease,background-color .2s ease}
 .nav-link:hover{background:rgba(137,206,255,.08)}
 .hero .img-fluid{border:1px solid rgba(255,255,255,.14);border-radius:18px;box-shadow:0 28px 72px rgba(0,0,0,.38)}
 a:focus-visible,button:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+.spec-table-wrap { background: var(--surface3); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto; }
+.spec-table { width: 100%; min-width: 760px; border-collapse: collapse; font-family: "JetBrains Mono", monospace; font-size: 13px; line-height: 1.6; }
+/* Header */
+.spec-table thead{padding: 8px 0; background-color: #1c2b3c;}
+.spec-table thead th { padding: 16px 24px; text-align: left; font-size: 11px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--muted2); border-bottom: 1px solid var(--border); }
+/* Rows */
+.spec-table tbody td { padding: 18px 24px; vertical-align: middle; font-weight: 600; border-bottom: 1px solid var(--border); transition: background-color .2s ease; }
+.spec-table tbody tr:last-child td { border-bottom: 0; }
+.spec-table tbody tr:hover td { background: rgba(137, 206, 255, .04); }
+/* Column widths + colors */
+.spec-table th:nth-child(1),
+.spec-table td:nth-child(1) { width: 22%; color: var(--teal); }
+.spec-table th:nth-child(2),
+.spec-table td:nth-child(2) { width: 38%; color: var(--text); }
+.spec-table th:nth-child(3),
+.spec-table td:nth-child(3) { width: 40%; color: var(--blue); }
+/* Mobile: stack each row as a card */
+@media (max-width: 767px) {
+  .spec-table-wrap { overflow-x: visible; padding: 0; background: transparent; border: 0; }
+  .spec-table { min-width: 0; }
+  .spec-table thead { display: none; }
+  .spec-table,
+  .spec-table tbody,
+  .spec-table tr,
+  .spec-table td { display: block; width: 100% !important; }
+  .spec-table tr { background: var(--surface3); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; padding: 8px 0; }
+  .spec-table tbody td { border-bottom: 0; padding: 8px 16px; }
+  .spec-table tbody td::before { content: attr(data-label); display: block; margin-bottom: 2px; font-size: 10px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--muted2); }
+}
