@@ -22,7 +22,7 @@ const REQUIRED_MESSAGES = {
   service: "Please select the service you need."
 };
 
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw520dBVO-cwFycHBOtDGgnlMz-3RjN6AcZ8AhJgZqQvx71E6fpA0t33DV0_hnwjcXI/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzh0Ck4Lw45YUVJ_Oe9NveODb7YlTY7nMuZlMexoU80UZ46kKxIhxMWw6ECpvh9LgYz/exec';
 
 // ============ UTILITY FUNCTIONS ============
 const setStatus = (message, type = "") => {
